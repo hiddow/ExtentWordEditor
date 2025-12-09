@@ -1,0 +1,55 @@
+// This schema file is defined in server/prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String   @id @default(uuid())
+  username    String   @unique
+  password    String   // Hashed
+  role        String   // "admin" | "editor"
+  permissions String   // JSON string of PermissionMap
+  createdAt   DateTime @default(now())
+}
+
+model AppDefinition {
+  id    String @id @default(uuid())
+  name  String @unique
+}
+
+model VocabItem {
+  id                String   @id @default(uuid())
+  intId             Int      
+  appName           String
+  targetLang        String
+  term              String
+  
+  // Content
+  script            String?
+  phonetic          String?
+  variant           String?
+  partOfSpeech      String?
+  
+  // Media
+  imageUrl          String? // Base64 or Path
+  audioUrl          String? // Base64 or Path
+  
+  // JSON Blobs
+  translations      String // JSON Key-Value
+  exampleTranslations String // JSON Key-Value
+  
+  exampleSentence   String?
+  exampleScript     String?
+  
+  status            String // "pending", "processing", "completed", "error"
+  originalIndex     Int
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}

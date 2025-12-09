@@ -82,6 +82,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, darkMode, tog
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
+                autoComplete="username"
                 className="w-full pl-10 pr-3 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-colors placeholder:text-slate-400 dark:placeholder:text-slate-600"
                 placeholder="..."
                 required
@@ -99,6 +100,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, darkMode, tog
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                autoComplete="current-password"
                 className="w-full pl-10 pr-3 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-colors placeholder:text-slate-400 dark:placeholder:text-slate-600"
                 placeholder="••••••••"
                 required
