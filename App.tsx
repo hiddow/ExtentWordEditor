@@ -20,6 +20,13 @@ import * as XLSX from 'xlsx';
 import JSZip from 'jszip';
 import saveAs from 'file-saver';
 
+const generateId = () => {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID();
+  }
+  return `id_${Math.random().toString(36).slice(2)}`;
+};
+
 // Documentation Modal Component
 const HelpModal = ({ onClose, lang }: { onClose: () => void, lang: UILanguage }) => {
     const t = translations[lang];
@@ -231,7 +238,7 @@ function App() {
 
   const handleImportComplete = async (appName: string, langCode: LanguageCode, terms: string[]) => {
     const newItems: VocabItem[] = terms.map((term, idx) => ({
-      id: crypto.randomUUID(),
+      id: generateId(),
       intId: 0, // Placeholder, set by service
       appName: appName,
       targetLang: langCode, // Specific dataset language
@@ -271,7 +278,7 @@ function App() {
     }
     
     const newItem: VocabItem = {
-        id: crypto.randomUUID(),
+        id: generateId(),
         intId: 0, // Service will set
         appName: currentAppName,
         targetLang: currentTargetLang,

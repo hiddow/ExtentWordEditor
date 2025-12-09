@@ -3,7 +3,22 @@ import { VocabItem, User, UserRole, PermissionMap, AppDefinition, ItemStatus } f
 const apiFromEnv = (typeof import.meta !== 'undefined' && (import.meta as any).env?.VITE_API_URL)
   ? (import.meta as any).env.VITE_API_URL
   : undefined;
-const API_URL = apiFromEnv || 'http://localhost:3002';
+
+const apiFromWindow = (() => {
+  if (typeof window === 'undefined') return undefined;
+  const { protocol, hostname, port } = window.location;
+  // 在未配置环境变量时，自动尝试使用当前主机的 3002 端口
+  if (!port || port === '80' || port === '443') {
+    return `${protocol}//${hostname}:3002`;
+  }
+  if (port === '3000' || port === '4173') {
+    return `${protocol}//${hostname}:3002`;
+  }
+  // 其余情况回退为同主机同端口，便于反向代理
+  return `${protocol}//${hostname}${port ? `:${port}` : ''}`;
+})();
+
+const API_URL = apiFromEnv || apiFromWindow || 'http://localhost:3002';
 const SESSION_KEY = 'vocab_forge_token';
 const KEY_APPS = 'vocab_forge_apps';
 const KEY_VOCAB = 'vocab_forge_items';
