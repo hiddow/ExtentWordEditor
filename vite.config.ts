@@ -6,7 +6,7 @@ export default defineConfig(({ mode }) => {
     const env = loadEnv(mode, '.', '');
     const allowedHosts = env.VITE_ALLOWED_HOSTS
       ? env.VITE_ALLOWED_HOSTS.split(',').map((h) => h.trim()).filter(Boolean)
-      : ['hiddow.xyz'];
+      : ['extentwords.hiddow.xyz'];
     const base = env.VITE_BASE_PATH || '/';
     return {
       base,
