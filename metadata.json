@@ -1,0 +1,5 @@
+{
+  "name": "拓展词汇编辑器",
+  "description": "An AI-powered vocabulary builder for teachers. Upload Excel/CSV lists to automatically generate phonetics, multi-language translations, scripts (Kana/Pinyin), example sentences, and illustrations. Supports editing and JSON export.",
+  "requestFramePermissions": []
+}
