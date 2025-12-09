@@ -3,7 +3,21 @@ import { AIResponseSchema, VocabItem, SentenceToken } from "../types";
 const apiFromEnv = (typeof import.meta !== 'undefined' && (import.meta as any).env?.VITE_API_URL)
   ? (import.meta as any).env.VITE_API_URL
   : undefined;
-const API_URL = `${apiFromEnv || 'http://localhost:3002'}/ai/generate`;
+
+const apiFromWindow = (() => {
+  if (typeof window === 'undefined') return undefined;
+  const { protocol, hostname, port } = window.location;
+  // 未配置环境变量时，优先尝试同主机 3002 端口，其次用当前端口，便于反代
+  if (!port || port === '80' || port === '443') {
+    return `${protocol}//${hostname}:3002`;
+  }
+  if (port === '3000' || port === '4173') {
+    return `${protocol}//${hostname}:3002`;
+  }
+  return `${protocol}//${hostname}${port ? `:${port}` : ''}`;
+})();
+
+const API_URL = `${apiFromEnv || apiFromWindow || 'http://localhost:3002'}/ai/generate`;
 
 export const generateVocabData = async (
   term: string, 
