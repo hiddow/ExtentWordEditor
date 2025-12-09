@@ -24,13 +24,14 @@ View your app in AI Studio: https://ai.studio/apps/drive/1FVEY90acP9lG8oJd_RkVba
 - 默认前端 `base` 为 `/`，适合用子域名（如 `extentwords.hiddow.xyz`）直接反代到 3000 端口。如需子路径部署可设置 `VITE_BASE_PATH=/extentwords/` 并重启前端。
 - 默认允许域名 `extentwords.hiddow.xyz`，可用 `VITE_ALLOWED_HOSTS=domain1,domain2` 覆盖；如需自定义 API 地址，设置 `VITE_API_URL=http://your-api:3002`。
 
-### Nginx 反代示例（子域名根路径）
+### Nginx 反代示例（前端：子域名根路径，后端同域 /api 转发）
 
 ```
 server {
   listen 80;
   server_name extentwords.hiddow.xyz;
 
+  # 前端 Vite dev 或打包后服务（3000）
   location / {
     proxy_pass http://127.0.0.1:3000/;
     proxy_set_header Host $host;
@@ -40,6 +41,39 @@ server {
     proxy_http_version 1.1;
     proxy_set_header Upgrade $http_upgrade;
     proxy_set_header Connection "upgrade";
+  }
+
+  # 后端 API (3002)，前端需要在 .env.local 设 VITE_API_URL=https://extentwords.hiddow.xyz/api
+  location /api/ {
+    proxy_pass http://127.0.0.1:3002/;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+  }
+}
+```
+
+### Nginx 反代示例（后端单独子域名）
+
+```
+server {
+  listen 80;
+  server_name extentwords.hiddow.xyz;
+
+  location / { ...同上反代到 3000... }
+}
+
+server {
+  listen 80;
+  server_name api.hiddow.xyz;
+
+  location / {
+    proxy_pass http://127.0.0.1:3002/;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
   }
 }
 ```

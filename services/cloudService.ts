@@ -7,15 +7,19 @@ const apiFromEnv = (typeof import.meta !== 'undefined' && (import.meta as any).e
 const apiFromWindow = (() => {
   if (typeof window === 'undefined') return undefined;
   const { protocol, hostname, port } = window.location;
-  // 在未配置环境变量时，自动尝试使用当前主机的 3002 端口
-  if (!port || port === '80' || port === '443') {
-    return `${protocol}//${hostname}:3002`;
-  }
+  const origin = `${protocol}//${hostname}${port ? `:${port}` : ''}`;
+  const isLocal = hostname === 'localhost' || hostname === '127.0.0.1';
+
+  // 生产环境默认走同域 /api（由 Nginx 反代到 3002）
+  if (!isLocal) return `${origin}/api`;
+
+  // 本地开发：若 Vite 在 3000/4173，后端默认 3002
   if (port === '3000' || port === '4173') {
     return `${protocol}//${hostname}:3002`;
   }
-  // 其余情况回退为同主机同端口，便于反向代理
-  return `${protocol}//${hostname}${port ? `:${port}` : ''}`;
+
+  // 其它本地端口，尝试同域 /api
+  return `${origin}/api`;
 })();
 
 const API_URL = apiFromEnv || apiFromWindow || 'http://localhost:3002';
